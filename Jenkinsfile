@@ -1,23 +1,23 @@
 pipeline {
 
-    /* Force Jenkins to actually run on built-in node */
-    agent { label 'built-in' }
+    /* Built-in node with executors */
+    agent any
 
     tools {
-        nodejs 'node25'   // must EXACTLY match Jenkins → Manage Jenkins → Tools
+        nodejs 'node25'   // must EXACTLY match Manage Jenkins → Tools
     }
 
     environment {
         IMAGE_NAME = "angular-ui-jenkins"
         CONTAINER_NAME = "angular-ui-jenkins"
-        APP_PORT = "9090"   // avoid conflict with Jenkins (8080)
+        APP_PORT = "9090"   // Jenkins runs on 8080
     }
 
     stages {
 
         stage('Agent Check') {
             steps {
-                bat 'echo Jenkins agent is executing stages'
+                bat 'echo BUILT-IN NODE IS EXECUTING PIPELINE'
             }
         }
 
@@ -76,10 +76,10 @@ pipeline {
 
     post {
         success {
-            bat 'echo Application deployed successfully'
+            bat 'echo DEPLOYMENT SUCCESSFUL'
         }
         always {
-            bat 'echo Pipeline finished'
+            bat 'echo PIPELINE FINISHED'
         }
     }
 }
