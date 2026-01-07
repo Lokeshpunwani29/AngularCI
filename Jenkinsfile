@@ -21,28 +21,34 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
+                bat 'npm ci'
             }
         }
 
         stage('Build Angular') {
             steps {
-                sh 'npm run build -- --configuration production'
+                bat 'npm run build -- --configuration production'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t $IMAGE_NAME .'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh '''
-                  docker stop $CONTAINER_NAME || true
-                  docker rm $CONTAINER_NAME || true
-                  docker run -d -p 80:80 --name $CONTAINER_NAME $IMAGE_NAME
+                bat '''
+                docker ps -a -q -f name=%CONTAINER_NAME% > temp.txt
+                set /p CID=<temp.txt
+                if not "%CID%"=="" (
+                    docker stop %CONTAINER_NAME%
+                    docker rm %CONTAINER_NAME%
+                )
+                del temp.txt
+
+                docker run -d -p 8080:80 --name %CONTAINER_NAME% %IMAGE_NAME%
                 '''
             }
         }
