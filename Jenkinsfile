@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'node25'
+    }
+
     environment {
         IMAGE_NAME = "angular-ui-jenkins"
         CONTAINER_NAME = "angular-ui-jenkins"
